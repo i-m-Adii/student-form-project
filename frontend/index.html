@@ -10,7 +10,7 @@
 
 <div class="container">
 
-    <h1>User Registration</h1>
+    <h1><h1>Registration Portal</h1></h1>
 
     <form id="userForm">
 
@@ -18,11 +18,16 @@
 
         <input type="email" id="email" placeholder="Email" required>
 
-        <input type="text" id="phone" placeholder="Phone Number" required>
+        <div class="phone-box">
+    <span>+91</span>
+    <input type="tel" id="phone" placeholder="9876543210" pattern="[6-9][0-9]{9}" maxlength="10" required>
+</div>
+        
 
-        <input type="number" id="age" placeholder="Age" required>
+    <input type="text" id="age"placeholder="Age" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
 
-        <input type="text" id="city" placeholder="City" required>
+
+    <input type="text" id="city" placeholder="City" required>
 
         <select id="gender">
             <option>Male</option>

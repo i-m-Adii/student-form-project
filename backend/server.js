@@ -15,6 +15,7 @@ const pool = new Pool({
     port: 5432
 });
 
+// Register User API
 app.post("/register", async (req, res) => {
 
     console.log("=== REQUEST RECEIVED ===");
@@ -32,50 +33,18 @@ app.post("/register", async (req, res) => {
         } = req.body;
 
         // Check if email already exists
-
         const existingUser = await pool.query(
             "SELECT * FROM users WHERE email = $1",
             [email]
         );
 
         if (existingUser.rows.length > 0) {
-
             return res.json({
                 message: "Email already registered"
             });
-
         }
 
-        });
-
-app.get("/users", async (req, res) => {
-
-    try {
-
-        const users = await pool.query(
-            "SELECT * FROM users ORDER BY id DESC"
-        );
-
-        res.json(users.rows);
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            message: "Error fetching users"
-        });
-
-    }
-
-});
-
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
-});
-
         // Insert new user
-
         await pool.query(
             `INSERT INTO users
             (fullname,email,phone,age,city,gender)
@@ -107,4 +76,37 @@ app.listen(3000, () => {
 
     }
 
+});
+
+// View All Users API
+app.get("/users", async (req, res) => {
+
+    try {
+
+        const users = await pool.query(
+            "SELECT * FROM users ORDER BY id DESC"
+        );
+
+        res.json(users.rows);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Error fetching users"
+        });
+
+    }
+
+});
+
+// Home Route
+app.get("/", (req, res) => {
+    res.send("Backend Working Successfully");
+});
+
+// Start Server
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
 });

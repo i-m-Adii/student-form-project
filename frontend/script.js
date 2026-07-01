@@ -8,57 +8,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
         e.preventDefault();
 
-        console.log("FORM SUBMITTED");
-
         const data = {
-            fullname: document.getElementById("fullname").value,
-            email: document.getElementById("email").value,
-            phone: document.getElementById("phone").value,
-            age: document.getElementById("age").value,
-            city: document.getElementById("city").value,
+            fullname: document.getElementById("fullname").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            phone: document.getElementById("phone").value.trim(),
+            age: document.getElementById("age").value.trim(),
+            city: document.getElementById("city").value.trim(),
             gender: document.getElementById("gender").value
         };
-        const existingUser = await pool.query(
-    "SELECT * FROM users WHERE email = $1",
-    [email]
-);
 
-if(existingUser.rows.length > 0){
-    return res.json({
-        message: "Email already registered"
-    });
-}
+        // Email Validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        console.log("Sending Data:", data);
+        if (!emailPattern.test(data.email)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        // Phone Validation
+        const phonePattern = /^[6-9][0-9]{9}$/;
+
+        if (!phonePattern.test(data.phone)) {
+            alert("Phone number must be a valid 10-digit Indian mobile number.");
+            return;
+        }
+
+        // Age Validation
+        const age = Number(data.age);
+
+        if (isNaN(age) || age < 1 || age > 90) {
+            alert("Age must be between 1 and 90.");
+            return;
+        }
 
         try {
 
-            const response = await fetch(
-                "http://localhost:3000/register",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(data)
-                }
-            );
+            const response = await fetch("http://localhost:3000/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
 
             const result = await response.json();
 
-            console.log(result);
+            document.getElementById("message").innerText = result.message;
 
-            document.getElementById("message").innerText =
-                result.message;
+            if (response.ok) {
+                form.reset();
+            }
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Error:", error);
 
             document.getElementById("message").innerText =
-                "Error connecting to server";
+                "Error connecting to server.";
+
         }
 
     });
 
 });
+
